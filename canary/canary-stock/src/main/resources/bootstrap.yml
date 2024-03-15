@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: canary-stock
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true

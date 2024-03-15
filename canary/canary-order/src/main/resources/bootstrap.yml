@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: canary-order
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true

@@ -1,0 +1,18 @@
+server:
+  port: 1107
+spring:
+  # cloud
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848   #注册中心地址
+        group: DISTRIBUTED
+        namespace: DISTRIBUTED
+        metadata:
+          version: 1.2.0 # 灰度分支
+      config: # 规则：${prefix}（spring.application.name）-${spring.profiles.active}（spring.profiles.active）.${file-extension} : kunpeng-appreciate-local.yaml
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        #prefix: application-dev #配置前缀 ，默认使用sring.application.name
+        group: DISTRIBUTED
+        namespace: DISTRIBUTED
