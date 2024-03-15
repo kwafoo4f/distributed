@@ -11,12 +11,10 @@ import org.springframework.cloud.client.loadbalancer.*;
 import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -57,13 +55,13 @@ public class GreyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                 return new EmptyResponse();
             }
             // 获得 HttpHeaders 属性，实现从 header 中获取 version
-            String version = Optional.ofNullable(request).map(Request::getContext).map(context->(RequestDataContext)context)
+            String version = Optional.ofNullable(request).map(Request::getContext).map(context -> (RequestDataContext) context)
                     .map(RequestDataContext::getClientRequest).map(RequestData::getHeaders)
                     .map(httpHeaders -> httpHeaders.getFirst(Headers.VERSION)).orElse("");
 
             // 灰度发布,使用请求头中的version判断
             if (StringUtils.isNotBlank(version)) {
-                return this.getGreyInstanceResponse(serviceInstances,version);
+                return this.getGreyInstanceResponse(serviceInstances, version);
             }
             return this.getClusterInstanceResponse(serviceInstances);
         } catch (Exception e) {
@@ -78,9 +76,9 @@ public class GreyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
      * @param serviceInstances
      * @return
      */
-    private Response<ServiceInstance> getGreyInstanceResponse(List<ServiceInstance> serviceInstances,String version) {
+    private Response<ServiceInstance> getGreyInstanceResponse(List<ServiceInstance> serviceInstances, String version) {
         if (serviceInstances.isEmpty()) {
-            log.warn("GreyBalancer:No servers available for service: {}" ,this.serviceId);
+            log.warn("GreyBalancer:No servers available for service: {}", this.serviceId);
             return new EmptyResponse();
         }
 
@@ -101,7 +99,7 @@ public class GreyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
             // 使用nacos的负载均衡算法
             ServiceInstance instance = NacosBalancer.getHostByRandomWeight3(instancesToChoose);
-            log.info("GreyBalancer,命中机器服务 version: {},host: {},node-version={}",version, instance.getHost(),instance.getMetadata().get(Headers.VERSION));
+            log.info("GreyBalancer,命中机器服务 version: {},host: {},node-version={}", version, instance.getHost(), instance.getMetadata().get(Headers.VERSION));
             return new DefaultResponse(instance);
         } catch (Exception e) {
             log.warn("GreyBalancer error", e);
@@ -127,7 +125,7 @@ public class GreyLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     private Response<ServiceInstance> getClusterInstanceResponse(
             List<ServiceInstance> serviceInstances) {
         if (serviceInstances.isEmpty()) {
-            log.warn("ClusterInstanceResponse:No servers available for service: {}",this.serviceId);
+            log.warn("ClusterInstanceResponse:No servers available for service: {}", this.serviceId);
             return new EmptyResponse();
         }
 
